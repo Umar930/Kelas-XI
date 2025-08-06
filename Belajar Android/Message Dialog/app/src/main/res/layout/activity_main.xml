@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="16dp">
+
+    <Button
+        android:id="@+id/btnTampilkanToast"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tampilkan Toast"
+        android:layout_margin="16dp"
+        android:onClick="tampilkanToast" />
+
+    <Button
+        android:id="@+id/btnTampilkanAlertDialog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tampilkan Alert Dialog"
+        android:layout_margin="16dp"
+        android:onClick="tampilkanAlertDialog" />
+
+    <Button
+        android:id="@+id/btnTampilkanAlertDialogTombol"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Alert Dialog dengan Tombol"
+        android:layout_margin="16dp"
+        android:onClick="tampilkanAlertDialogTombol" />
+
+</LinearLayout>
