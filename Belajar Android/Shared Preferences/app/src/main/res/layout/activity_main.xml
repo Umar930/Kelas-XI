@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <EditText
+        android:id="@+id/et_nama_barang"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Nama Barang"
+        android:inputType="text"
+        android:layout_marginBottom="16dp"/>
+
+    <EditText
+        android:id="@+id/et_stok_barang"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Stok Barang"
+        android:inputType="numberDecimal"
+        android:layout_marginBottom="16dp"/>
+
+    <Button
+        android:id="@+id/btn_simpan"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Simpan"
+        android:onClick="simpan"
+        android:layout_marginBottom="8dp"/>
+
+    <Button
+        android:id="@+id/btn_tampil"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Tampil"
+        android:onClick="tampil"/>
+
+</LinearLayout>
