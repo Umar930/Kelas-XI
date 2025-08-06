@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">KonversiSuhu</string>
+    <string-array name="jenis_konversi">
+        <item>Celsius ke Fahrenheit</item>
+        <item>Fahrenheit ke Celsius</item>
+        <item>Celsius ke Reamur</item>
+        <item>Reamur ke Celsius</item>
+        <item>Fahrenheit ke Reamur</item>
+        <item>Reamur ke Fahrenheit</item>
+    </string-array>
+</resources>
