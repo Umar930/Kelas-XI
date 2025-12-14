@@ -5,11 +5,11 @@ Siswa:
 - password: password
 
 Kurikulum:
-- email: Kurikulum@example.com
+- email: kurikulum@example.com
 - password: password
 
 Kepala Sekolah:
-- email: Kepsek@example.com
+- email: kepsek@example.com
 - password: password
 
 Admin: 
