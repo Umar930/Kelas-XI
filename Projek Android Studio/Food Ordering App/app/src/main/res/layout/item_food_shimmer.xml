@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginVertical="4dp"
+    android:layout_marginHorizontal="4dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="4dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp">
+
+        <View
+            android:id="@+id/shimmerImage"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:background="@color/shimmer_color"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <View
+            android:id="@+id/shimmerName"
+            android:layout_width="0dp"
+            android:layout_height="16dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="80dp"
+            android:background="@color/shimmer_color"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/shimmerImage"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/shimmerPrice"
+            android:layout_width="100dp"
+            android:layout_height="14dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="12dp"
+            android:background="@color/shimmer_color"
+            app:layout_constraintStart_toEndOf="@id/shimmerImage"
+            app:layout_constraintTop_toBottomOf="@id/shimmerName" />
+
+        <View
+            android:id="@+id/shimmerCategory"
+            android:layout_width="150dp"
+            android:layout_height="12dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="12dp"
+            android:background="@color/shimmer_color"
+            app:layout_constraintStart_toEndOf="@id/shimmerImage"
+            app:layout_constraintTop_toBottomOf="@id/shimmerPrice"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

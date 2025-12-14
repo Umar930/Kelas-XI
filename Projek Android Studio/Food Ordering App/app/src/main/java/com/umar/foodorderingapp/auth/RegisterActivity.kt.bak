@@ -1,0 +1,832 @@
+package com.umar.foodorderingapp.authpackage com.umar.foodorderingapp.authpackage com.umar.foodorderingapp.auth
+
+
+
+import android.content.Intent
+
+import android.content.SharedPreferences
+
+import android.os.Bundleimport android.content.Intentimport android.os.Bundle
+
+import android.view.View
+
+import android.widget.Toastimport android.content.SharedPreferencesimport android.view.View
+
+import androidx.appcompat.app.AlertDialog
+
+import androidx.appcompat.app.AppCompatActivityimport android.os.Bundleimport androidx.appcompat.app.AlertDialog
+
+import com.google.firebase.auth.FirebaseAuth
+
+import com.google.firebase.firestore.FirebaseFirestoreimport android.view.Viewimport androidx.appcompat.app.AppCompatActivity
+
+import com.umar.foodorderingapp.MainActivity
+
+import com.umar.foodorderingapp.databinding.ActivityRegisterBindingimport androidx.appcompat.app.AlertDialogimport com.google.firebase.auth.FirebaseAuth
+
+import com.umar.foodorderingapp.util.Constants
+
+import androidx.appcompat.app.AppCompatActivityimport com.google.firebase.firestore.FirebaseFirestore
+
+class RegisterActivity : AppCompatActivity() {
+
+    import com.google.firebase.auth.FirebaseAuthimport com.umar.foodorderingapp.databinding.ActivityRegisterBinding
+
+    private lateinit var binding: ActivityRegisterBinding
+
+    private lateinit var auth: FirebaseAuthimport com.google.firebase.auth.UserProfileChangeRequestimport com.umar.foodorderingapp.model.User
+
+    private lateinit var db: FirebaseFirestore
+
+    private lateinit var prefs: SharedPreferencesimport com.google.firebase.firestore.FirebaseFirestoreimport com.umar.foodorderingapp.util.Constants
+
+    
+
+    override fun onCreate(savedInstanceState: Bundle?) {import com.umar.foodorderingapp.MainActivityimport com.umar.foodorderingapp.util.showToast
+
+        super.onCreate(savedInstanceState)
+
+        binding = ActivityRegisterBinding.inflate(layoutInflater)import com.umar.foodorderingapp.databinding.ActivityRegisterBinding
+
+        setContentView(binding.root)
+
+        import com.umar.foodorderingapp.model.Userclass RegisterActivity : AppCompatActivity() {
+
+        // Initialize Firebase Auth and Firestore
+
+        auth = FirebaseAuth.getInstance()import com.umar.foodorderingapp.util.Constants
+
+        db = FirebaseFirestore.getInstance()
+
+        import com.umar.foodorderingapp.util.showToast    private lateinit var binding: ActivityRegisterBinding
+
+        // Initialize SharedPreferences
+
+        prefs = getSharedPreferences(Constants.PREFS_NAME, MODE_PRIVATE)    private lateinit var auth: FirebaseAuth
+
+        
+
+        setupClickListeners()class RegisterActivity : AppCompatActivity() {    private lateinit var db: FirebaseFirestore
+
+    }
+
+        
+
+    private fun setupClickListeners() {
+
+        // Register button click listener    private lateinit var binding: ActivityRegisterBinding    override fun onCreate(savedInstanceState: Bundle?) {
+
+        binding.btnRegister.setOnClickListener {
+
+            val name = binding.etName.text.toString().trim()    private lateinit var auth: FirebaseAuth        super.onCreate(savedInstanceState)
+
+            val email = binding.etEmail.text.toString().trim()
+
+            val password = binding.etPassword.text.toString().trim()    private lateinit var db: FirebaseFirestore        binding = ActivityRegisterBinding.inflate(layoutInflater)
+
+            val confirmPassword = binding.etConfirmPassword.text.toString().trim()
+
+            val phone = binding.etPhone.text.toString().trim()    private lateinit var prefs: SharedPreferences        setContentView(binding.root)
+
+            val address = binding.etAddress.text.toString().trim()
+
+                        
+
+            if (validateInput(name, email, password, confirmPassword, phone, address)) {
+
+                // Show loading indicator    override fun onCreate(savedInstanceState: Bundle?) {        // Initialize Firebase Auth and Firestore
+
+                binding.progressBar.visibility = View.VISIBLE
+
+                binding.btnRegister.isEnabled = false        super.onCreate(savedInstanceState)        auth = FirebaseAuth.getInstance()
+
+                
+
+                // Show registration options        binding = ActivityRegisterBinding.inflate(layoutInflater)        db = FirebaseFirestore.getInstance()
+
+                showRegistrationOptionsDialog(name, email, password, phone, address)
+
+            }        setContentView(binding.root)
+
+        }
+
+                        setupClickListeners()
+
+        // Login text click listener
+
+        binding.tvLoginPrompt.setOnClickListener {        // Initialize Firebase Auth and Firestore    }
+
+            finish()
+
+        }        auth = FirebaseAuth.getInstance()
+
+    }
+
+            db = FirebaseFirestore.getInstance()    private fun setupClickListeners() {
+
+    private fun showRegistrationOptionsDialog(
+
+        name: String,                // Register button click listener
+
+        email: String,
+
+        password: String,        // Initialize SharedPreferences        binding.btnRegister.setOnClickListener {
+
+        phone: String,
+
+        address: String        prefs = getSharedPreferences(Constants.PREFS_NAME, MODE_PRIVATE)            val name = binding.etName.text.toString().trim()
+
+    ) {
+
+        val dialogBuilder = AlertDialog.Builder(this)                    val email = binding.etEmail.text.toString().trim()
+
+        dialogBuilder.setTitle("Informasi Registrasi")
+
+            .setMessage("Metode registrasi email mungkin belum diaktifkan di Firebase. Pilih metode registrasi:")        setupClickListeners()            val phone = binding.etPhone.text.toString().trim()
+
+            .setPositiveButton("Registrasi Anonymous") { _, _ ->
+
+                // Use anonymous auth    }            val address = binding.etAddress.text.toString().trim()
+
+                registerWithAnonymous(name, email, phone, address)
+
+            }                val password = binding.etPassword.text.toString().trim()
+
+            .setNegativeButton("Coba Email/Password") { _, _ ->
+
+                // Try standard registration    private fun setupClickListeners() {
+
+                registerWithEmailPassword(name, email, password, phone, address)
+
+            }        // Register button click listener            if (validateInput(name, email, phone, address, password)) {
+
+            .setCancelable(true)
+
+            .setOnCancelListener {        binding.btnRegister.setOnClickListener {                // Show loading indicator
+
+                // If dialog dismissed, reset UI
+
+                binding.progressBar.visibility = View.GONE            val name = binding.etName.text.toString().trim()                binding.progressBar.visibility = View.VISIBLE
+
+                binding.btnRegister.isEnabled = true
+
+            }            val email = binding.etEmail.text.toString().trim()                binding.btnRegister.isEnabled = false
+
+            .create()
+
+            .show()            val password = binding.etPassword.text.toString().trim()                
+
+    }
+
+                val confirmPassword = binding.etConfirmPassword.text.toString().trim()                // Register user with Firebase
+
+    private fun registerWithEmailPassword(
+
+        name: String,            val phone = binding.etPhone.text.toString().trim()                registerUser(name, email, phone, address, password)
+
+        email: String,
+
+        password: String,            val address = binding.etAddress.text.toString().trim()            }
+
+        phone: String,
+
+        address: String                    }
+
+    ) {
+
+        auth.createUserWithEmailAndPassword(email, password)            if (validateInput(name, email, password, confirmPassword, phone, address)) {
+
+            .addOnCompleteListener { task ->
+
+                binding.progressBar.visibility = View.GONE                // Show loading indicator        // Login text click listener
+
+                binding.btnRegister.isEnabled = true
+
+                                binding.progressBar.visibility = View.VISIBLE        binding.tvLoginPrompt.setOnClickListener {
+
+                if (task.isSuccessful) {
+
+                    // Registration successful                binding.btnRegister.isEnabled = false            finish() // Go back to login activity
+
+                    val userId = auth.currentUser?.uid ?: ""
+
+                                            }
+
+                    // Create user data
+
+                    val userData = hashMapOf(                // Register user with Firebase    }
+
+                        "id" to userId,
+
+                        "name" to name,                registerUser(name, email, password, phone, address)    
+
+                        "email" to email,
+
+                        "phone" to phone,            }    private fun registerUser(name: String, email: String, phone: String, address: String, password: String) {
+
+                        "address" to address,
+
+                        "isAdmin" to false        }        try {
+
+                    )
+
+                                        auth.createUserWithEmailAndPassword(email, password)
+
+                    // Save to Firestore
+
+                    db.collection(Constants.USERS_COLLECTION)        // Login text click listener                .addOnCompleteListener { task ->
+
+                        .document(userId)
+
+                        .set(userData)        binding.tvLoginPrompt.setOnClickListener {                    if (task.isSuccessful) {
+
+                        .addOnSuccessListener {
+
+                            showToast("Registrasi berhasil")            finish()                        val userId = auth.currentUser?.uid
+
+                            saveLoginSession(userId)
+
+                            navigateToMain()        }                        if (userId == null) {
+
+                        }
+
+                        .addOnFailureListener {    }                            binding.progressBar.visibility = View.GONE
+
+                            // Even if save fails, still log in
+
+                            showToast("Registrasi berhasil, data tidak tersimpan")                                binding.btnRegister.isEnabled = true
+
+                            saveLoginSession(userId)
+
+                            navigateToMain()    private fun registerUser(name: String, email: String, password: String, phone: String, address: String) {                            showToast("Error: Tidak dapat mendapatkan ID pengguna")
+
+                        }
+
+                } else {        try {                            return@addOnCompleteListener
+
+                    // Handle registration failure
+
+                    val message = when {            // Show dialog for authentication options                        }
+
+                        task.exception?.message?.contains("sign-in provider is disabled") == true ->
+
+                            "Metode registrasi email tidak aktif. Gunakan registrasi anonymous."            val dialogBuilder = AlertDialog.Builder(this)                        
+
+                        task.exception?.message?.contains("email address is already in use") == true ->
+
+                            "Email sudah digunakan. Silakan login."            dialogBuilder.setTitle("Informasi Registrasi")                        // Create user data in Firestore FIRST
+
+                        else -> "Registrasi gagal: ${task.exception?.message}"
+
+                    }                .setMessage("Metode registrasi email/password mungkin belum diaktifkan di Firebase Console. Apakah Anda ingin mencoba registrasi alternatif untuk demo?")                        val user = User(
+
+                    showToast(message)
+
+                                    .setPositiveButton("Ya") { _, _ ->                            id = userId,
+
+                    // If provider disabled, try anonymous
+
+                    if (task.exception?.message?.contains("sign-in provider is disabled") == true) {                    // Use anonymous auth for demo                            name = name,
+
+                        registerWithAnonymous(name, email, phone, address)
+
+                    }                    registerWithAnonymous(name, email, phone, address)                            email = email,
+
+                }
+
+            }                }                            phone = phone,
+
+    }
+
+                    .setNegativeButton("Tetap Coba Email") { _, _ ->                            address = address,
+
+    private fun registerWithAnonymous(
+
+        name: String,                    // Try email/password registration                            isAdmin = false
+
+        email: String,
+
+        phone: String,                    tryEmailPasswordRegistration(name, email, password, phone, address)                        )
+
+        address: String
+
+    ) {                }                        
+
+        auth.signInAnonymously()
+
+            .addOnCompleteListener { task ->                .create()                        db.collection(Constants.USERS_COLLECTION)
+
+                binding.progressBar.visibility = View.GONE
+
+                binding.btnRegister.isEnabled = true                .show()                            .document(userId)
+
+                
+
+                if (task.isSuccessful) {        } catch (e: Exception) {                            .set(user)
+
+                    val userId = auth.currentUser?.uid ?: ""
+
+                                binding.progressBar.visibility = View.GONE                            .addOnSuccessListener {
+
+                    // Create user data for anonymous user
+
+                    val userData = hashMapOf(            binding.btnRegister.isEnabled = true                                // Send verification email AFTER user data is saved
+
+                        "id" to userId,
+
+                        "name" to "Demo User ($name)",            showToast("Terjadi kesalahan: ${e.message}")                                auth.currentUser?.sendEmailVerification()
+
+                        "email" to email,
+
+                        "phone" to phone,        }                                    ?.addOnCompleteListener { emailTask ->
+
+                        "address" to address,
+
+                        "isAdmin" to false    }                                        binding.progressBar.visibility = View.GONE
+
+                    )
+
+                                                                binding.btnRegister.isEnabled = true
+
+                    // Save to Firestore
+
+                    db.collection(Constants.USERS_COLLECTION)    private fun tryEmailPasswordRegistration(name: String, email: String, password: String, phone: String, address: String) {                                        
+
+                        .document(userId)
+
+                        .set(userData)        binding.progressBar.visibility = View.VISIBLE                                        if (emailTask.isSuccessful) {
+
+                        .addOnSuccessListener {
+
+                            showToast("Registrasi demo berhasil")                                                    showToast("Registrasi berhasil! Email verifikasi telah dikirim ke $email")
+
+                            saveLoginSession(userId)
+
+                            navigateToMain()        auth.createUserWithEmailAndPassword(email, password)                                        } else {
+
+                        }
+
+                        .addOnFailureListener {            .addOnCompleteListener { task ->                                            showToast("Registrasi berhasil! Namun gagal mengirim email verifikasi: ${emailTask.exception?.message}")
+
+                            // Even if save fails, still log in
+
+                            showToast("Registrasi berhasil, data tidak tersimpan")                if (task.isSuccessful) {                                        }
+
+                            saveLoginSession(userId)
+
+                            navigateToMain()                    val userId = auth.currentUser?.uid                                        finish() // Kembali ke halaman login
+
+                        }
+
+                } else {                    if (userId == null) {                                    }
+
+                    showToast("Registrasi anonymous gagal: ${task.exception?.message}")
+
+                }                        binding.progressBar.visibility = View.GONE                            }
+
+            }
+
+    }                        binding.btnRegister.isEnabled = true                            .addOnFailureListener { e ->
+
+    
+
+    private fun saveLoginSession(userId: String) {                        showToast("Error: Tidak dapat mendapatkan ID pengguna")                                binding.progressBar.visibility = View.GONE
+
+        prefs.edit()
+
+            .putBoolean(Constants.KEY_IS_LOGGED_IN, true)                        return@addOnCompleteListener                                binding.btnRegister.isEnabled = true
+
+            .putString(Constants.KEY_USER_ID, userId)
+
+            .putBoolean(Constants.KEY_IS_ADMIN, false)                    }                                
+
+            .apply()
+
+    }                                                    showToast("Gagal menyimpan data pengguna: ${e.message}")
+
+    
+
+    private fun navigateToMain() {                    // Set display name                                // Delete the Firebase Auth user if Firestore save fails
+
+        val intent = Intent(this, MainActivity::class.java)
+
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK                    val profileUpdates = UserProfileChangeRequest.Builder()                                try {
+
+        startActivity(intent)
+
+        finish()                        .setDisplayName(name)                                    auth.currentUser?.delete()
+
+    }
+
+                            .build()                                } catch (deleteEx: Exception) {
+
+    private fun validateInput(
+
+        name: String,                                                        // Just log the error, user can still login
+
+        email: String,
+
+        password: String,                    auth.currentUser?.updateProfile(profileUpdates)                                }
+
+        confirmPassword: String,
+
+        phone: String,                        ?.addOnCompleteListener { profileTask ->                            }
+
+        address: String
+
+    ): Boolean {                            if (!profileTask.isSuccessful) {                    } else {
+
+        var isValid = true
+
+                                        showToast("Gagal menyimpan nama profil")                        binding.progressBar.visibility = View.GONE
+
+        if (name.isEmpty()) {
+
+            binding.tilName.error = "Nama tidak boleh kosong"                            }                        binding.btnRegister.isEnabled = true
+
+            isValid = false
+
+        } else {                                                    
+
+            binding.tilName.error = null
+
+        }                            // Create user object                        val errorMessage = when {
+
+        
+
+        if (email.isEmpty()) {                            val user = User(                            task.exception?.message?.contains("email address is already in use") == true -> 
+
+            binding.tilEmail.error = "Email tidak boleh kosong"
+
+            isValid = false                                id = userId,                                "Email sudah terdaftar. Silakan gunakan email lain."
+
+        } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+
+            binding.tilEmail.error = "Format email tidak valid"                                name = name,                            task.exception?.message?.contains("password is invalid") == true -> 
+
+            isValid = false
+
+        } else {                                email = email,                                "Password tidak valid. Gunakan minimal 6 karakter."
+
+            binding.tilEmail.error = null
+
+        }                                phone = phone,                            task.exception?.message?.contains("network") == true -> 
+
+        
+
+        if (password.isEmpty()) {                                address = address,                                "Koneksi internet bermasalah. Periksa koneksi Anda."
+
+            binding.tilPassword.error = "Password tidak boleh kosong"
+
+            isValid = false                                isAdmin = false                            task.exception?.message?.contains("sign-in provider is disabled") == true -> {
+
+        } else if (password.length < 6) {
+
+            binding.tilPassword.error = "Password minimal 6 karakter"                            )                                // Tampilkan dialog untuk register dengan anonymous auth
+
+            isValid = false
+
+        } else {                                                            showRegisterWithAnonymousDialog(name, email, phone, address)
+
+            binding.tilPassword.error = null
+
+        }                            // Save user data to Firestore                                "Metode registrasi email/password tidak diaktifkan di Firebase Console."
+
+        
+
+        if (confirmPassword.isEmpty()) {                            db.collection(Constants.USERS_COLLECTION)                            }
+
+            binding.tilConfirmPassword.error = "Konfirmasi password tidak boleh kosong"
+
+            isValid = false                                .document(userId)                            else -> "Registrasi gagal: ${task.exception?.message}"
+
+        } else if (password != confirmPassword) {
+
+            binding.tilConfirmPassword.error = "Password tidak sama"                                .set(user)                        }
+
+            isValid = false
+
+        } else {                                .addOnSuccessListener {                        showToast(errorMessage)
+
+            binding.tilConfirmPassword.error = null
+
+        }                                    binding.progressBar.visibility = View.GONE                    }
+
+        
+
+        if (phone.isEmpty()) {                                    binding.btnRegister.isEnabled = true                }
+
+            binding.tilPhone.error = "Nomor telepon tidak boleh kosong"
+
+            isValid = false                                            } catch (e: Exception) {
+
+        } else {
+
+            binding.tilPhone.error = null                                    saveUserDataAndNavigate(userId, false)            binding.progressBar.visibility = View.GONE
+
+        }
+
+                                        }            binding.btnRegister.isEnabled = true
+
+        if (address.isEmpty()) {
+
+            binding.tilAddress.error = "Alamat tidak boleh kosong"                                .addOnFailureListener { e ->            showToast("Terjadi kesalahan: ${e.message}")
+
+            isValid = false
+
+        } else {                                    binding.progressBar.visibility = View.GONE        }
+
+            binding.tilAddress.error = null
+
+        }                                    binding.btnRegister.isEnabled = true    }
+
+        
+
+        return isValid                                    showToast("Registrasi berhasil tetapi gagal menyimpan data. ${e.message}")    
+
+    }
+
+                                            private fun showRegisterWithAnonymousDialog(name: String, email: String, phone: String, address: String) {
+
+    private fun showToast(message: String) {
+
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()                                    // Even if Firestore fails, we can still navigate since auth is successful        val dialogBuilder = AlertDialog.Builder(this)
+
+    }
+
+}                                    saveUserDataAndNavigate(userId, false)        dialogBuilder.setTitle("Firebase Email Auth Tidak Aktif")
+
+                                }            .setMessage("Autentikasi email/password tidak diaktifkan di Firebase project ini. Apakah Anda ingin menggunakan autentikasi anonim untuk demo?")
+
+                        }            .setPositiveButton("Ya") { _, _ ->
+
+                } else {                registerWithAnonymous(name, email, phone, address)
+
+                    binding.progressBar.visibility = View.GONE            }
+
+                    binding.btnRegister.isEnabled = true            .setNegativeButton("Tidak") { dialog, _ ->
+
+                                    dialog.dismiss()
+
+                    val errorMessage = when {            }
+
+                        task.exception?.message?.contains("email address is already") == true ->             .create()
+
+                            "Email sudah terdaftar. Silakan login."            .show()
+
+                        task.exception?.message?.contains("password is invalid") == true ->     }
+
+                            "Password tidak valid. Gunakan minimal 6 karakter."    
+
+                        task.exception?.message?.contains("network") == true ->     private fun registerWithAnonymous(name: String, email: String, phone: String, address: String) {
+
+                            "Koneksi internet bermasalah. Periksa koneksi Anda."        binding.progressBar.visibility = View.VISIBLE
+
+                        task.exception?.message?.contains("sign-in provider is disabled") == true ->         binding.btnRegister.isEnabled = false
+
+                            "Metode registrasi email/password tidak diaktifkan di Firebase. Menggunakan registrasi alternatif."        
+
+                        else -> "Registrasi gagal: ${task.exception?.message}"        auth.signInAnonymously()
+
+                    }            .addOnCompleteListener { task ->
+
+                                    if (task.isSuccessful) {
+
+                    showToast(errorMessage)                    val userId = auth.currentUser?.uid
+
+                                        if (userId == null) {
+
+                    // If error because provider disabled, use anonymous auth                        binding.progressBar.visibility = View.GONE
+
+                    if (task.exception?.message?.contains("sign-in provider is disabled") == true) {                        binding.btnRegister.isEnabled = true
+
+                        registerWithAnonymous(name, email, phone, address)                        showToast("Error: Tidak dapat mendapatkan ID pengguna")
+
+                    }                        return@addOnCompleteListener
+
+                }                    }
+
+            }                    
+
+    }                    // Create user data in Firestore
+
+                        val user = User(
+
+    private fun registerWithAnonymous(name: String, email: String, phone: String, address: String) {                        id = userId,
+
+        binding.progressBar.visibility = View.VISIBLE                        name = name,
+
+        binding.btnRegister.isEnabled = false                        email = email,
+
+                                phone = phone,
+
+        auth.signInAnonymously()                        address = address,
+
+            .addOnCompleteListener { task ->                        isAdmin = false
+
+                if (task.isSuccessful) {                    )
+
+                    val userId = auth.currentUser?.uid                    
+
+                    if (userId == null) {                    db.collection(Constants.USERS_COLLECTION)
+
+                        binding.progressBar.visibility = View.GONE                        .document(userId)
+
+                        binding.btnRegister.isEnabled = true                        .set(user)
+
+                        showToast("Error: Tidak dapat mendapatkan ID pengguna")                        .addOnSuccessListener {
+
+                        return@addOnCompleteListener                            binding.progressBar.visibility = View.GONE
+
+                    }                            binding.btnRegister.isEnabled = true
+
+                                                
+
+                    // Create user object                            showToast("Registrasi demo berhasil! Mode: Anonymous")
+
+                    val user = User(                            finish() // Kembali ke halaman login
+
+                        id = userId,                        }
+
+                        name = "Demo User ($name)",                        .addOnFailureListener { e ->
+
+                        email = email,                            binding.progressBar.visibility = View.GONE
+
+                        phone = phone,                            binding.btnRegister.isEnabled = true
+
+                        address = address,                            
+
+                        isAdmin = false                            showToast("Gagal menyimpan data pengguna: ${e.message}")
+
+                    )                        }
+
+                                    } else {
+
+                    // Save user data to Firestore                    binding.progressBar.visibility = View.GONE
+
+                    db.collection(Constants.USERS_COLLECTION)                    binding.btnRegister.isEnabled = true
+
+                        .document(userId)                    
+
+                        .set(user)                    showToast("Registrasi alternatif gagal: ${task.exception?.message}")
+
+                        .addOnSuccessListener {                }
+
+                            binding.progressBar.visibility = View.GONE            }
+
+                            binding.btnRegister.isEnabled = true    }
+
+                            showToast("Registrasi demo berhasil! Mode: Anonymous")    }
+
+                            saveUserDataAndNavigate(userId, false)
+
+                        }    private fun validateInput(
+
+                        .addOnFailureListener { e ->        name: String,
+
+                            binding.progressBar.visibility = View.GONE        email: String,
+
+                            binding.btnRegister.isEnabled = true        phone: String,
+
+                            showToast("Registrasi alternatif berhasil, tetapi gagal menyimpan data pengguna: ${e.message}")        address: String,
+
+                            saveUserDataAndNavigate(userId, false)        password: String
+
+                        }    ): Boolean {
+
+                } else {        var isValid = true
+
+                    binding.progressBar.visibility = View.GONE
+
+                    binding.btnRegister.isEnabled = true        if (name.isEmpty()) {
+
+                    showToast("Registrasi alternatif gagal: ${task.exception?.message}")            binding.tilName.error = "Nama tidak boleh kosong"
+
+                }            isValid = false
+
+            }        } else {
+
+    }            binding.tilName.error = null
+
+            }
+
+    private fun saveUserDataAndNavigate(userId: String, isAdmin: Boolean) {
+
+        // Save login status and user data to SharedPreferences        if (email.isEmpty()) {
+
+        prefs.edit()            binding.tilEmail.error = "Email tidak boleh kosong"
+
+            .putBoolean(Constants.KEY_IS_LOGGED_IN, true)            isValid = false
+
+            .putString(Constants.KEY_USER_ID, userId)        } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+
+            .putBoolean(Constants.KEY_IS_ADMIN, isAdmin)            binding.tilEmail.error = "Format email tidak valid"
+
+            .apply()            isValid = false
+
+                } else {
+
+        showToast("Registrasi berhasil!")            binding.tilEmail.error = null
+
+                }
+
+        // Navigate to Main Activity
+
+        val intent = Intent(this, MainActivity::class.java)        if (phone.isEmpty()) {
+
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK            binding.tilPhone.error = "Nomor telepon tidak boleh kosong"
+
+        startActivity(intent)            isValid = false
+
+        finish()        } else {
+
+    }            binding.tilPhone.error = null
+
+            }
+
+    private fun validateInput(
+
+        name: String,        if (address.isEmpty()) {
+
+        email: String,            binding.tilAddress.error = "Alamat tidak boleh kosong"
+
+        password: String,            isValid = false
+
+        confirmPassword: String,        } else {
+
+        phone: String,            binding.tilAddress.error = null
+
+        address: String        }
+
+    ): Boolean {
+
+        var isValid = true        if (password.isEmpty()) {
+
+                    binding.tilPassword.error = "Kata sandi tidak boleh kosong"
+
+        if (name.isEmpty()) {            isValid = false
+
+            binding.tilName.error = "Nama tidak boleh kosong"        } else if (password.length < 6) {
+
+            isValid = false            binding.tilPassword.error = "Kata sandi minimal 6 karakter"
+
+        } else {            isValid = false
+
+            binding.tilName.error = null        } else {
+
+        }            binding.tilPassword.error = null
+
+                }
+
+        if (email.isEmpty()) {
+
+            binding.tilEmail.error = "Email tidak boleh kosong"        return isValid
+
+            isValid = false    }
+
+        } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+
+            binding.tilEmail.error = "Format email tidak valid"}
+
+            isValid = false
+        } else {
+            binding.tilEmail.error = null
+        }
+        
+        if (password.isEmpty()) {
+            binding.tilPassword.error = "Password tidak boleh kosong"
+            isValid = false
+        } else if (password.length < 6) {
+            binding.tilPassword.error = "Password minimal 6 karakter"
+            isValid = false
+        } else {
+            binding.tilPassword.error = null
+        }
+        
+        if (confirmPassword.isEmpty()) {
+            binding.tilConfirmPassword.error = "Konfirmasi password tidak boleh kosong"
+            isValid = false
+        } else if (password != confirmPassword) {
+            binding.tilConfirmPassword.error = "Password tidak sama"
+            isValid = false
+        } else {
+            binding.tilConfirmPassword.error = null
+        }
+        
+        if (phone.isEmpty()) {
+            binding.tilPhone.error = "Nomor telepon tidak boleh kosong"
+            isValid = false
+        } else {
+            binding.tilPhone.error = null
+        }
+        
+        if (address.isEmpty()) {
+            binding.tilAddress.error = "Alamat tidak boleh kosong"
+            isValid = false
+        } else {
+            binding.tilAddress.error = null
+        }
+        
+        return isValid
+    }
+}

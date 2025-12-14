@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/nav_bbc"
+        android:title="BBC News" />
+
+    <item
+        android:id="@+id/nav_cnn"
+        android:title="CNN" />
+
+    <item
+        android:id="@+id/nav_aljazeera"
+        android:title="Al Jazeera" />
+
+    <item
+        android:id="@+id/nav_reuters"
+        android:title="Reuters" />
+
+    <item
+        android:id="@+id/nav_guardian"
+        android:title="The Guardian" />
+
+</menu>

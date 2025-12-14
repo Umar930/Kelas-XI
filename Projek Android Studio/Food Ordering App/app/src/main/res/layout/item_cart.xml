@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="8dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="2dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp">
+
+        <ImageView
+            android:id="@+id/ivFoodImage"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:scaleType="centerCrop"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@tools:sample/avatars" />
+
+        <TextView
+            android:id="@+id/tvFoodName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/ivFoodImage"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Nama Makanan" />
+
+        <TextView
+            android:id="@+id/tvPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="4dp"
+            android:textColor="@color/primary"
+            android:textSize="14sp"
+            app:layout_constraintStart_toEndOf="@+id/ivFoodImage"
+            app:layout_constraintTop_toBottomOf="@+id/tvFoodName"
+            tools:text="Rp25.000" />
+
+        <LinearLayout
+            android:id="@+id/layoutQuantity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal"
+            app:layout_constraintStart_toEndOf="@+id/ivFoodImage"
+            app:layout_constraintTop_toBottomOf="@+id/tvPrice">
+
+            <Button
+                android:id="@+id/btnDecrease"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:backgroundTint="@color/grey_light"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:padding="0dp"
+                android:text="-"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/tvQuantity"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:gravity="center"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                tools:text="1" />
+
+            <Button
+                android:id="@+id/btnIncrease"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:backgroundTint="@color/grey_light"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:padding="0dp"
+                android:text="+"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvSubtotalLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:text="Subtotal:"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toStartOf="@+id/tvSubtotal"
+            app:layout_constraintTop_toBottomOf="@+id/layoutQuantity" />
+
+        <TextView
+            android:id="@+id/tvSubtotal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/primary"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/layoutQuantity"
+            tools:text="Rp25.000" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>

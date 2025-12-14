@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="200"
+    android:viewportHeight="200">
+
+    <!-- Background circle -->
+    <path
+        android:fillColor="#FF5722"
+        android:pathData="M100,100 m-90,0 a90,90 0 1,0 180,0 a90,90 0 1,0 -180,0"/>
+
+    <!-- Plate/dish shape (white circle) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M100,100 m-70,0 a70,70 0 1,0 140,0 a70,70 0 1,0 -140,0"/>
+
+    <!-- Food item 1 - Rice/Noodle representation -->
+    <path
+        android:fillColor="#F9A825"
+        android:pathData="M95,85 c-25,5 -25,30 0,35 c25,-5 25,-30 0,-35"/>
+
+    <!-- Food item 2 - Vegetable representation -->
+    <path
+        android:fillColor="#43A047"
+        android:pathData="M115,80 c15,5 15,25 0,30 c-15,-5 -15,-25 0,-30"/>
+
+    <!-- Food item 3 - Meat representation -->
+    <path
+        android:fillColor="#8D6E63"
+        android:pathData="M75,100 c-15,5 -15,25 0,30 c15,-5 15,-25 0,-30"/>
+
+    <!-- Fork and spoon icon -->
+    <path
+        android:fillColor="#FF5722"
+        android:pathData="M65,60 l5,-15 l5,15 l-5,40 z"/>
+
+    <path
+        android:fillColor="#FF5722"
+        android:pathData="M135,60 c5,-15 -15,-15 -10,0 l10,40 z"/>
+
+    <!-- Letter 'R' shape -->
+    <path
+        android:fillColor="#FF5722"
+        android:pathData="M80,135 l5,-15 c10,0 10,10 0,10 l5,5 l-5,0 l-5,-5 l0,5 z"/>
+
+    <!-- Letter 'G' shape -->
+    <path
+        android:fillColor="#FF5722"
+        android:pathData="M120,120 c10,0 10,15 0,15 l-10,0 l0,-15 l10,0 l0,10 l-5,0"/>
+
+</vector>

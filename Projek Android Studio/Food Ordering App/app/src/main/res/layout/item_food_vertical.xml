@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="4dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/ivFoodImage"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:contentDescription="@string/app_name"
+            android:scaleType="fitCenter"
+            android:padding="4dp"
+            android:adjustViewBounds="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@drawable/logo_food" />
+
+        <TextView
+            android:id="@+id/tvFoodName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/ivFoodImage"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Nama Makanan" />
+
+        <TextView
+            android:id="@+id/tvFoodDescription"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="16dp"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textColor="@color/grey_dark"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/ivFoodImage"
+            app:layout_constraintTop_toBottomOf="@+id/tvFoodName"
+            tools:text="Deskripsi makanan yang panjang dan detail untuk memberikan informasi kepada pengguna" />
+
+        <TextView
+            android:id="@+id/tvFoodPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="16dp"
+            android:textColor="@color/primary"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/ivFoodImage"
+            app:layout_constraintTop_toBottomOf="@+id/tvFoodDescription"
+            tools:text="Rp 25.000" />
+
+        <RatingBar
+            android:id="@+id/ratingBar"
+            style="?android:attr/ratingBarStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:isIndicator="true"
+            android:numStars="5"
+            android:stepSize="0.1"
+            app:layout_constraintBottom_toBottomOf="@+id/tvFoodPrice"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tvFoodPrice"
+            tools:rating="4.5" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>
