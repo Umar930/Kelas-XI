@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_input_kehadiran"
+        android:icon="@android:drawable/ic_menu_edit"
+        android:title="Input Kehadiran" />
+    
+    <item
+        android:id="@+id/nav_laporan_kehadiran"
+        android:icon="@android:drawable/ic_menu_view"
+        android:title="Laporan Kehadiran" />
+    
+    <item
+        android:id="@+id/nav_request_pengganti"
+        android:icon="@android:drawable/ic_menu_send"
+        android:title="Request Pengganti" />
+</menu>

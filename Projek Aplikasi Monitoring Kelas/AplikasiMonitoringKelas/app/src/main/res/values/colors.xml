@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    
+    <!-- Primary Colors -->
+    <color name="primary">#2196F3</color>
+    <color name="primary_dark">#1976D2</color>
+    <color name="primary_light">#BBDEFB</color>
+    <color name="accent">#03A9F4</color>
+    
+    <!-- Status Colors -->
+    <color name="success">#4CAF50</color>
+    <color name="success_light">#E8F5E9</color>
+    <color name="danger">#F44336</color>
+    <color name="danger_light">#FFEBEE</color>
+    <color name="warning">#FF9800</color>
+    <color name="warning_light">#FFF3E0</color>
+    <color name="info">#2196F3</color>
+    <color name="info_light">#E3F2FD</color>
+    
+    <!-- Background Colors -->
+    <color name="background">#F5F5F5</color>
+    <color name="card_background">#FFFFFF</color>
+    <color name="divider">#E0E0E0</color>
+    
+    <!-- Text Colors -->
+    <color name="text_primary">#212121</color>
+    <color name="text_secondary">#757575</color>
+    <color name="text_hint">#9E9E9E</color>
+    
+    <!-- Bottom Nav Colors -->
+    <color name="bottom_nav_selected">#2196F3</color>
+    <color name="bottom_nav_unselected">#9E9E9E</color>
+    
+    <!-- Status Kehadiran Colors -->
+    <color name="status_hadir">#4CAF50</color>
+    <color name="status_tidak_hadir">#F44336</color>
+    <color name="status_izin">#FF9800</color>
+    <color name="status_sakit">#9C27B0</color>
+    <color name="bg_status_hadir">#E8F5E9</color>
+    <color name="bg_status_tidak_hadir">#FFEBEE</color>
+    <color name="bg_status_izin">#FFF3E0</color>
+    <color name="bg_status_sakit">#F3E5F5</color>
+</resources>

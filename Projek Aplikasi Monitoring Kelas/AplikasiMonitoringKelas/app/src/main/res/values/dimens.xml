@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="recycler_bottom_padding_nav">72dp</dimen>
+    <dimen name="recycler_bottom_padding_fab">96dp</dimen>
+    <dimen name="recycler_bottom_padding_extra">8dp</dimen>
+</resources>

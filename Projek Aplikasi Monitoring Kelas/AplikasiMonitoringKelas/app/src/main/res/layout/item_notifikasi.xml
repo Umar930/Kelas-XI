@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardNotif"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="3dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp">
+
+        <!-- Icon -->
+        <ImageView
+            android:id="@+id/ivIcon"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@android:drawable/ic_dialog_info"
+            android:tint="#FF9800"
+            android:padding="8dp"
+            android:background="@drawable/badge_bg"
+            android:backgroundTint="#FFF3E0"
+            android:contentDescription="Icon" />
+
+        <!-- Content -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_marginStart="12dp">
+
+            <!-- Tipe Badge -->
+            <TextView
+                android:id="@+id/tvTipe"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="SAKIT"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/white"
+                android:background="#FF5722"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp"
+                android:layout_marginBottom="8dp" />
+
+            <!-- Pesan -->
+            <TextView
+                android:id="@+id/tvPesan"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Guru Pak Budi (Pemrograman Web) sakit pada 2025-12-03. Keterangan: Demam tinggi"
+                android:textSize="14sp"
+                android:textColor="#212121"
+                android:lineSpacingMultiplier="1.2" />
+
+            <!-- Tanggal -->
+            <TextView
+                android:id="@+id/tvTanggal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="03 Des 2025, 08:00"
+                android:textSize="12sp"
+                android:textColor="#757575"
+                android:layout_marginTop="8dp"
+                android:drawableStart="@android:drawable/ic_menu_recent_history"
+                android:drawableTint="#757575"
+                android:drawablePadding="4dp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

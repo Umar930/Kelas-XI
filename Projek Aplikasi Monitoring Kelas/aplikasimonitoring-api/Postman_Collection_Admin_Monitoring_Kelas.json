@@ -1,0 +1,552 @@
+{
+  "info": {
+    "name": "Admin Monitoring Kelas API",
+    "description": "Complete API collection for Admin Panel Monitoring Kelas",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000/api",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Authentication",
+      "item": [
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set(\"token\", jsonData.data.token);",
+                  "    console.log(\"Token saved:\", jsonData.data.token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@sekolah.sch.id\",\n  \"password\": \"admin123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/login",
+              "host": ["{{base_url}}"],
+              "path": ["login"]
+            }
+          }
+        },
+        {
+          "name": "Check Auth",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/check",
+              "host": ["{{base_url}}"],
+              "path": ["check"]
+            }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/logout",
+              "host": ["{{base_url}}"],
+              "path": ["logout"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. User Management",
+      "item": [
+        {
+          "name": "Get All Users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users?search=&role=&per_page=10",
+              "host": ["{{base_url}}"],
+              "path": ["users"],
+              "query": [
+                {"key": "search", "value": ""},
+                {"key": "role", "value": ""},
+                {"key": "per_page", "value": "10"}
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get User by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users/1",
+              "host": ["{{base_url}}"],
+              "path": ["users", "1"]
+            }
+          }
+        },
+        {
+          "name": "Create User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test User\",\n  \"email\": \"testuser@example.com\",\n  \"password\": \"password123\",\n  \"role\": \"guru\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/users",
+              "host": ["{{base_url}}"],
+              "path": ["users"]
+            }
+          }
+        },
+        {
+          "name": "Update User",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test User Updated\",\n  \"role\": \"kurikulum\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/users/1",
+              "host": ["{{base_url}}"],
+              "path": ["users", "1"]
+            }
+          }
+        },
+        {
+          "name": "Delete User",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users/2",
+              "host": ["{{base_url}}"],
+              "path": ["users", "2"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Mata Pelajaran",
+      "item": [
+        {
+          "name": "Get All Mata Pelajaran",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/mata-pelajaran?search=&kategori=&per_page=10",
+              "host": ["{{base_url}}"],
+              "path": ["mata-pelajaran"],
+              "query": [
+                {"key": "search", "value": ""},
+                {"key": "kategori", "value": ""},
+                {"key": "per_page", "value": "10"}
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Mata Pelajaran",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"kode\": \"MTK\",\n  \"nama\": \"Matematika\",\n  \"kategori\": \"Wajib\",\n  \"jam_pelajaran\": 4\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/mata-pelajaran",
+              "host": ["{{base_url}}"],
+              "path": ["mata-pelajaran"]
+            }
+          }
+        },
+        {
+          "name": "Update Mata Pelajaran",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nama\": \"Matematika Lanjutan\",\n  \"jam_pelajaran\": 5\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/mata-pelajaran/1",
+              "host": ["{{base_url}}"],
+              "path": ["mata-pelajaran", "1"]
+            }
+          }
+        },
+        {
+          "name": "Delete Mata Pelajaran",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/mata-pelajaran/1",
+              "host": ["{{base_url}}"],
+              "path": ["mata-pelajaran", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Tahun Ajaran",
+      "item": [
+        {
+          "name": "Get All Tahun Ajaran",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/tahun-ajarans",
+              "host": ["{{base_url}}"],
+              "path": ["tahun-ajarans"]
+            }
+          }
+        },
+        {
+          "name": "Get Active Tahun Ajaran",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/tahun-ajarans/active",
+              "host": ["{{base_url}}"],
+              "path": ["tahun-ajarans", "active"]
+            }
+          }
+        },
+        {
+          "name": "Activate Tahun Ajaran",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/tahun-ajarans/1/activate",
+              "host": ["{{base_url}}"],
+              "path": ["tahun-ajarans", "1", "activate"]
+            }
+          }
+        },
+        {
+          "name": "Create Tahun Ajaran",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tahun\": \"2025/2026\",\n  \"flag\": 0\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/tahun-ajarans",
+              "host": ["{{base_url}}"],
+              "path": ["tahun-ajarans"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Jadwal",
+      "item": [
+        {
+          "name": "Get All Jadwal",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/jadwal?kelas_id=&guru_id=&hari=&tahun_ajaran_id=&per_page=20",
+              "host": ["{{base_url}}"],
+              "path": ["jadwal"],
+              "query": [
+                {"key": "kelas_id", "value": ""},
+                {"key": "guru_id", "value": ""},
+                {"key": "hari", "value": ""},
+                {"key": "tahun_ajaran_id", "value": ""},
+                {"key": "per_page", "value": "20"}
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Timetable",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/jadwal/timetable?tahun_ajaran_id=&kelas_id=&guru_id=",
+              "host": ["{{base_url}}"],
+              "path": ["jadwal", "timetable"],
+              "query": [
+                {"key": "tahun_ajaran_id", "value": ""},
+                {"key": "kelas_id", "value": ""},
+                {"key": "guru_id", "value": ""}
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Jadwal",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"kelas_id\": 1,\n  \"mapel_id\": 1,\n  \"guru_id\": 1,\n  \"tahun_ajaran_id\": 1,\n  \"hari\": \"Senin\",\n  \"jam_mulai\": \"07:00\",\n  \"jam_selesai\": \"08:30\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/jadwal",
+              "host": ["{{base_url}}"],
+              "path": ["jadwal"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Guru Mengajar",
+      "item": [
+        {
+          "name": "Get All Guru Mengajar",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/guru-mengajar?guru_id=&kelas_id=&tahun_ajaran_id=&per_page=10",
+              "host": ["{{base_url}}"],
+              "path": ["guru-mengajar"],
+              "query": [
+                {"key": "guru_id", "value": ""},
+                {"key": "kelas_id", "value": ""},
+                {"key": "tahun_ajaran_id", "value": ""},
+                {"key": "per_page", "value": "10"}
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Guru Mengajar",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tahun_ajaran_id\": 1,\n  \"guru_id\": 1,\n  \"mapel_id\": 1,\n  \"kelas_id\": 1,\n  \"jam_per_minggu\": 4,\n  \"keterangan\": \"Catatan tambahan\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/guru-mengajar",
+              "host": ["{{base_url}}"],
+              "path": ["guru-mengajar"]
+            }
+          }
+        },
+        {
+          "name": "Update Guru Mengajar",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"jam_per_minggu\": 5,\n  \"keterangan\": \"Updated note\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/guru-mengajar/1",
+              "host": ["{{base_url}}"],
+              "path": ["guru-mengajar", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. Guru Pengganti",
+      "item": [
+        {
+          "name": "Get All Guru Pengganti",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/guru-pengganti?status=&tanggal=&kelas_id=&guru_pengganti_id=&per_page=10",
+              "host": ["{{base_url}}"],
+              "path": ["guru-pengganti"],
+              "query": [
+                {"key": "status", "value": ""},
+                {"key": "tanggal", "value": ""},
+                {"key": "kelas_id", "value": ""},
+                {"key": "guru_pengganti_id", "value": ""},
+                {"key": "per_page", "value": "10"}
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Guru Pengganti",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"guru_pengganti_id\": 2,\n  \"kelas_id\": 1,\n  \"mapel_id\": 1,\n  \"tanggal\": \"2025-12-10\",\n  \"jam_mulai\": \"07:00\",\n  \"jam_selesai\": \"08:30\",\n  \"status\": \"pending\",\n  \"catatan\": \"Catatan tambahan\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/guru-pengganti",
+              "host": ["{{base_url}}"],
+              "path": ["guru-pengganti"]
+            }
+          }
+        },
+        {
+          "name": "Approve Guru Pengganti",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/guru-pengganti/1/approve",
+              "host": ["{{base_url}}"],
+              "path": ["guru-pengganti", "1", "approve"]
+            }
+          }
+        },
+        {
+          "name": "Reject Guru Pengganti",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"catatan\": \"Alasan penolakan\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/guru-pengganti/1/reject",
+              "host": ["{{base_url}}"],
+              "path": ["guru-pengganti", "1", "reject"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "8. Existing CRUD",
+      "item": [
+        {
+          "name": "Get All Guru",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/gurus",
+              "host": ["{{base_url}}"],
+              "path": ["gurus"]
+            }
+          }
+        },
+        {
+          "name": "Get All Mapel",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/mapels",
+              "host": ["{{base_url}}"],
+              "path": ["mapels"]
+            }
+          }
+        },
+        {
+          "name": "Get All Kelas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/kelas",
+              "host": ["{{base_url}}"],
+              "path": ["kelas"]
+            }
+          }
+        },
+        {
+          "name": "Get All Siswa",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/siswas",
+              "host": ["{{base_url}}"],
+              "path": ["siswas"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

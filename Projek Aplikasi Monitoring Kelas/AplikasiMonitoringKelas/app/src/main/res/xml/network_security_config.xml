@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config> 
+    <!-- Configuration untuk development (allow HTTP) -->
+    <domain-config cleartextTrafficPermitted="true">
+        <!-- Localhost untuk emulator -->
+        <domain includeSubdomains="true">10.0.2.2</domain>
+        <!-- Localhost untuk device -->
+        <domain includeSubdomains="true">localhost</domain>
+        <!-- IP komputer untuk testing di device fisik -->
+        <domain includeSubdomains="true">10.155.162.157</domain>
+    </domain-config>
+    
+    <!-- Base configuration -->
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>

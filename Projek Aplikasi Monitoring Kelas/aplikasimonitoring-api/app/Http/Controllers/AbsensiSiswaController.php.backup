@@ -1,0 +1,525 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\AbsensiSiswa;
+use App\Models\Siswa;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
+use Carbon\Carbon;
+
+class AbsensiSiswaController extends Controller
+{
+    /**
+     * GET /api/absensi-siswas
+     * List absensi siswa dengan filter
+     */
+    public function index(Request $request)
+    {
+        try {
+            // Load semua relasi yang diperlukan: siswa (dengan user untuk email), kelas
+            $query = AbsensiSiswa::with(['siswa.user', 'siswa.kelas', 'kelas']);
+
+            // PENTING: Filter berdasarkan role
+            // - Jika role = 'siswa': Hanya tampilkan absensi siswa yang login
+            // - Jika role = 'admin' atau 'kurikulum': Tampilkan SEMUA absensi siswa
+            if ($request->user()->role === 'siswa') {
+                $siswa = Siswa::where('user_id', $request->user()->id)->first();
+                if ($siswa) {
+                    $query->where('siswa_id', $siswa->id);
+                    Log::info("Siswa login - hanya tampilkan absensi siswa_id: {$siswa->id}");
+                }
+            } else {
+                // Admin/Kurikulum: tampilkan SEMUA absensi siswa
+                Log::info("Admin/Kurikulum login - tampilkan semua absensi siswa");
+            }
+
+            // Filter by status
+            if ($request->has('status')) {
+                $query->where('status', $request->status);
+            }
+
+            // Filter by tanggal
+            if ($request->has('tanggal')) {
+                $query->whereDate('tanggal', $request->tanggal);
+            }
+
+            // Filter by periode
+            if ($request->has('periode')) {
+                switch ($request->periode) {
+                    case 'today':
+                        $query->whereDate('tanggal', today());
+                        break;
+                    case 'week':
+                        $query->whereBetween('tanggal', [now()->startOfWeek(), now()->endOfWeek()]);
+                        break;
+                    case 'month':
+                        $query->whereMonth('tanggal', now()->month)
+                              ->whereYear('tanggal', now()->year);
+                        break;
+                }
+            }
+
+            // Urutkan: tanggal terbaru, created_at terbaru (yang baru absen muncul paling atas)
+            $query->orderBy('tanggal', 'desc')
+                  ->orderBy('created_at', 'desc');
+
+            // Support pagination: jika ada parameter 'per_page', gunakan pagination
+            // Jika tidak ada, ambil semua data (unlimited)
+            if ($request->has('per_page')) {
+                $perPage = (int) $request->per_page;
+                $absensiList = $query->paginate($perPage);
+                
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Data absensi siswa berhasil diambil',
+                    'data' => $absensiList->items(),
+                    'pagination' => [
+                        'current_page' => $absensiList->currentPage(),
+                        'per_page' => $absensiList->perPage(),
+                        'total' => $absensiList->total(),
+                        'last_page' => $absensiList->lastPage(),
+                    ]
+                ], 200);
+            } else {
+                // Tanpa pagination - ambil semua (untuk Android yang ingin unlimited)
+                $absensiList = $query->get();
+                
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Data absensi siswa berhasil diambil',
+                    'data' => $absensiList,
+                    'total' => $absensiList->count()
+                ], 200);
+            }
+
+        } catch (\Exception $e) {
+            Log::error('Error fetching absensi siswa: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengambil data absensi: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * GET /api/absensi-siswa/monitoring
+     * List SEMUA absensi siswa untuk monitoring/dashboard
+     * Bisa diakses oleh semua role (admin, kurikulum, siswa)
+     * TIDAK ada filter siswa_id - tampilkan SEMUA siswa yang sudah absen
+     */
+    public function monitoring(Request $request)
+    {
+        try {
+            // Load semua relasi yang diperlukan
+            $query = AbsensiSiswa::with(['siswa.user', 'siswa.kelas', 'kelas']);
+
+            Log::info("Monitoring endpoint - tampilkan SEMUA absensi siswa (no filter)");
+
+            // Filter by status (opsional)
+            if ($request->has('status')) {
+                $query->where('status', $request->status);
+            }
+
+            // Filter by tanggal (opsional)
+            if ($request->has('tanggal')) {
+                $query->whereDate('tanggal', $request->tanggal);
+            }
+
+            // Filter by periode (opsional)
+            if ($request->has('periode')) {
+                switch ($request->periode) {
+                    case 'today':
+                        $query->whereDate('tanggal', today());
+                        break;
+                    case 'week':
+                        $query->whereBetween('tanggal', [now()->startOfWeek(), now()->endOfWeek()]);
+                        break;
+                    case 'month':
+                        $query->whereMonth('tanggal', now()->month)
+                              ->whereYear('tanggal', now()->year);
+                        break;
+                }
+            }
+
+            // Urutkan: tanggal terbaru, created_at terbaru
+            $query->orderBy('tanggal', 'desc')
+                  ->orderBy('created_at', 'desc');
+
+            // UNLIMITED - ambil semua data tanpa pagination
+            $absensiList = $query->get();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Data monitoring absensi siswa berhasil diambil',
+                'data' => $absensiList,
+                'total' => $absensiList->count()
+            ], 200);
+
+        } catch (\Exception $e) {
+            Log::error('Error fetching monitoring absensi: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengambil data monitoring: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * POST /api/absensi-siswas
+     * Input absensi siswa
+     */
+    public function store(Request $request)
+    {
+        try {
+            // Validasi input
+            $validated = $request->validate([
+                'siswa_id' => 'nullable|integer',
+                'email' => 'nullable|email',
+                'nama' => 'nullable|string',
+                'kelas' => 'nullable|string',          
+                'tanggal' => 'required|date|before_or_equal:today',
+                'status' => 'required|in:hadir,sakit,izin',
+                'keterangan' => 'nullable|string|max:500',
+            ]);
+
+            $emailInput = $validated['email'] ?? null;
+            $namaInput = $validated['nama'] ?? null;
+
+            Log::info("Absensi request - Email: {$emailInput}, Nama: {$namaInput}, Status: {$validated['status']}");
+
+            // Jika email dan nama kosong, cek apakah user yang login adalah siswa
+            if (empty($emailInput) || empty($namaInput)) {
+                // Cek apakah user yang login punya data siswa
+                $siswaData = Siswa::where('user_id', $request->user()->id)->first();
+                
+                if (!$siswaData) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Validasi gagal: Silakan isi Email dan Nama Siswa',
+                        'errors' => [
+                            'email' => ['Email siswa harus diisi (contoh: hendra.wijaya@example.com)'],
+                            'nama' => ['Nama siswa harus diisi (contoh: Hendra Wijaya)']
+                        ]
+                    ], 422);
+                }
+                
+                // Gunakan data siswa dari user yang login
+                $siswaId = $siswaData->id;
+                $kelasId = $siswaData->kelas_id;
+                Log::info("✅ Menggunakan data siswa dari user login - ID: {$siswaId}, Nama: {$siswaData->nama}");
+            } else {
+                // CARI SISWA berdasarkan EMAIL yang diinput di form
+                $user = \App\Models\User::where('email', $emailInput)->first();
+                
+                if (!$user) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Validasi gagal: Email tidak terdaftar di sistem',
+                        'errors' => [
+                            'email' => ["Email {$emailInput} tidak ditemukan di database. Gunakan email siswa yang benar (contoh: hendra.wijaya@example.com)"]
+                        ]
+                    ], 422);
+                }
+
+                // Cari siswa berdasarkan user_id
+                $siswaData = Siswa::where('user_id', $user->id)->first();
+                
+                if (!$siswaData) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Validasi gagal: Email bukan milik siswa',
+                        'errors' => [
+                            'email' => ["Email {$emailInput} bukan email siswa yang valid. Gunakan email siswa yang ada di database (contoh: fajar.rahman@example.com, citra.dewi@example.com, hendra.wijaya@example.com)"]
+                        ]
+                    ], 422);
+                }
+                
+                // Validasi nama siswa harus cocok
+                if (strtolower(trim($siswaData->nama)) !== strtolower(trim($namaInput))) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Validasi gagal: Nama tidak sesuai dengan email',
+                        'errors' => [
+                            'nama' => [
+                                "Nama yang Anda input ({$namaInput}) tidak cocok dengan email {$emailInput}.",
+                                "Nama yang benar untuk email ini adalah: {$siswaData->nama}"
+                            ]
+                        ]
+                    ], 422);
+                }
+
+                $siswaId = $siswaData->id;
+                $kelasId = $siswaData->kelas_id;
+            }
+            
+            Log::info("✅ Validasi berhasil - Siswa ID: {$siswaId}, Nama: {$siswaData->nama}, Kelas ID: {$kelasId}");
+
+            // HAPUS VALIDASI DUPLIKAT - Siswa boleh absen berkali-kali di hari yang sama
+            // Contoh use case: absen masuk pagi, absen pulang siang, dll.
+
+            // Create absensi dengan siswa_id dan kelas_id yang benar
+            $absensi = AbsensiSiswa::create([
+                'siswa_id' => $siswaId,
+                'kelas_id' => $kelasId,
+                'tanggal' => $validated['tanggal'],
+                'status' => $validated['status'],
+                'keterangan' => $validated['keterangan'] ?? null,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Absensi berhasil disimpan',
+                'data' => $absensi->load('siswa.user', 'siswa.kelas', 'kelas')
+            ], 201);
+
+        } catch (ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validasi gagal',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            Log::error('Error storing absensi siswa: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan server: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * PUT /api/absensi-siswas/{id}
+     * Update absensi (hanya milik sendiri)
+     */
+    public function update(Request $request, $id)
+    {
+        $user = $request->user();
+        $absensi = AbsensiSiswa::find($id);
+
+        if (!$absensi) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data absensi tidak ditemukan'
+            ], 404);
+        }
+
+        // Validasi ownership (siswa hanya bisa edit milik sendiri)
+        if ($user->role === 'siswa') {
+            $siswa = $user->siswa;
+            if (!$siswa || $absensi->siswa_id !== $siswa->id) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Anda tidak memiliki akses untuk mengubah absensi ini'
+                ], 403);
+            }
+        }
+
+        // Validation
+        $validator = Validator::make($request->all(), [
+            'status' => 'required|in:hadir,sakit,izin',
+            'keterangan' => 'required_if:status,sakit,izin|nullable|string',
+        ], [
+            'keterangan.required_if' => 'Keterangan wajib diisi untuk status sakit atau izin'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        // Update
+        $absensi->update([
+            'status' => $request->status,
+            'keterangan' => $request->keterangan,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Absensi berhasil diupdate',
+            'data' => $absensi
+        ]);
+    }
+
+    /**
+     * DELETE /api/absensi-siswas/{id}
+     * Soft delete absensi - SEMUA SISWA BISA HAPUS ABSENSI APAPUN
+     */
+    public function destroy(Request $request, $id)
+    {
+        try {
+            $absensi = AbsensiSiswa::find($id);
+
+            if (!$absensi) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Data absensi tidak ditemukan'
+                ], 404);
+            }
+
+            // SEMUA ROLE (siswa, admin, kurikulum) bisa hapus absensi apapun
+            Log::info("Menghapus absensi ID: {$id} oleh user: {$request->user()->email}");
+
+            // Soft delete
+            $absensi->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Absensi berhasil dihapus'
+            ]);
+            
+        } catch (\Exception $e) {
+            Log::error('Error deleting absensi: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menghapus data: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * POST /api/absensi-siswas/reset-all
+     * Reset semua absensi (soft delete batch)
+     * Hanya untuk kurikulum
+     */
+    public function resetAll(Request $request)
+    {
+        $user = $request->user();
+
+        // Validasi role
+        if ($user->role !== 'kurikulum') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Hanya kurikulum yang bisa reset semua absensi'
+            ], 403);
+        }
+
+        // Optional: Reset berdasarkan filter
+        $query = AbsensiSiswa::query();
+
+        if ($request->has('tanggal')) {
+            $query->byTanggal($request->tanggal);
+        }
+
+        if ($request->has('kelas_id')) {
+            $query->byKelas($request->kelas_id);
+        }
+
+        $count = $query->count();
+        $query->delete(); // Soft delete
+
+        return response()->json([
+            'success' => true,
+            'message' => "Berhasil reset {$count} data absensi"
+        ]);
+    }
+
+    /**
+     * GET /api/absensi-siswas/history
+     * Lihat data yang sudah di-reset (include soft deleted)
+     * Hanya untuk kurikulum
+     */
+    public function history(Request $request)
+    {
+        $user = $request->user();
+
+        // Validasi role
+        if ($user->role !== 'kurikulum') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Hanya kurikulum yang bisa melihat history'
+            ], 403);
+        }
+
+        $query = AbsensiSiswa::withTrashed();
+
+        // Filter
+        if ($request->has('status')) {
+            $query->byStatus($request->status);
+        }
+
+        if ($request->has('kelas_id')) {
+            $query->byKelas($request->kelas_id);
+        }
+
+        if ($request->has('tanggal')) {
+            $query->byTanggal($request->tanggal);
+        }
+
+        $absensi = $query->orderBy('tanggal', 'desc')->get();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Data history absensi berhasil diambil',
+            'data' => $absensi->map(function($item) {
+                return [
+                    'id' => $item->id,
+                    'siswa' => $item->siswa,
+                    'tanggal' => $item->tanggal->format('Y-m-d'),
+                    'status' => $item->status,
+                    'keterangan' => $item->keterangan,
+                    'is_deleted' => $item->deleted_at !== null,
+                    'deleted_at' => $item->deleted_at?->format('Y-m-d H:i:s'),
+                    'created_at' => $item->created_at->format('Y-m-d H:i:s'),
+                ];
+            })
+        ]);
+    }
+
+    /**
+     * GET /api/absensi-siswas/statistics
+     * Statistik absensi siswa
+     * Untuk kurikulum (middleware handled di route)
+     */
+    public function statistics(Request $request)
+    {
+        $query = AbsensiSiswa::query();
+
+        // Filter by kelas
+        if ($request->has('kelas_id')) {
+            $query->byKelas($request->kelas_id);
+        }
+
+        // Filter by periode
+        if ($request->has('periode')) {
+            switch ($request->periode) {
+                case 'today':
+                    $query->today();
+                    break;
+                case 'week':
+                    $query->thisWeek();
+                    break;
+                case 'month':
+                    $query->thisMonth();
+                    break;
+            }
+        } else {
+            // Default: bulan ini
+            $query->thisMonth();
+        }
+
+        $total = $query->count();
+        $hadir = (clone $query)->byStatus('hadir')->count();
+        $sakit = (clone $query)->byStatus('sakit')->count();
+        $izin = (clone $query)->byStatus('izin')->count();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Statistik absensi berhasil diambil',
+            'data' => [
+                'total' => $total,
+                'hadir' => $hadir,
+                'sakit' => $sakit,
+                'izin' => $izin,
+                'persentase_hadir' => $total > 0 ? round(($hadir / $total) * 100, 2) : 0,
+            ]
+        ]);
+    }
+}

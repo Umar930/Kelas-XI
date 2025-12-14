@@ -1,0 +1,308 @@
+package com.umar.aplikasimonitoringkelas
+
+import android.app.AlertDialog
+import android.content.Intent
+import android.os.Bundle
+import android.view.MenuItem
+import android.view.View
+import android.widget.*
+import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.navigation.NavigationView
+import com.umar.aplikasimonitoringkelas.data.api.ApiService
+import com.umar.aplikasimonitoringkelas.data.api.RetrofitClient
+import com.umar.aplikasimonitoringkelas.data.model.*
+import com.umar.aplikasimonitoringkelas.data.session.SessionManager
+import com.umar.aplikasimonitoringkelas.siswa.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.*
+
+class SiswaActivityNew : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+
+    private lateinit var drawerLayout: DrawerLayout
+    private lateinit var sessionManager: SessionManager
+    private lateinit var apiService: ApiService
+    
+    private lateinit var rvNotifikasi: RecyclerView
+    private lateinit var rvDaftarKelas: RecyclerView
+    private lateinit var rvDaftarSiswa: RecyclerView
+    private lateinit var rvJadwalGuru: RecyclerView
+    
+    private lateinit var tvNotifikasiHeader: TextView
+    private lateinit var tvSelectedKelas: TextView
+    private lateinit var tvJumlahSiswa: TextView
+    private lateinit var tvTanggalHariIni: TextView
+    
+    private lateinit var layoutDetailKelas: LinearLayout
+    private lateinit var progressBarKelas: ProgressBar
+    private lateinit var progressBarDetail: ProgressBar
+    
+    private val scope = CoroutineScope(Dispatchers.Main)
+    private var selectedKelas: KelasWithSiswa? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_siswa_new)
+
+        sessionManager = SessionManager.getInstance(this)
+        apiService = RetrofitClient.getApiService(this)
+
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+        supportActionBar?.title = "Dashboard Siswa"
+
+        drawerLayout = findViewById(R.id.drawer_layout)
+        val navView = findViewById<NavigationView>(R.id.nav_view)
+        navView.setNavigationItemSelectedListener(this)
+
+        val toggle = ActionBarDrawerToggle(
+            this,
+            drawerLayout,
+            toolbar,
+            R.string.navigation_drawer_open,
+            R.string.navigation_drawer_close
+        )
+        drawerLayout.addDrawerListener(toggle)
+        toggle.syncState()
+
+        initViews()
+        loadNotifikasi()
+        loadSemuaKelas()
+    }
+
+    private fun initViews() {
+        rvNotifikasi = findViewById(R.id.rvNotifikasi)
+        rvDaftarKelas = findViewById(R.id.rvDaftarKelas)
+        rvDaftarSiswa = findViewById(R.id.rvDaftarSiswa)
+        rvJadwalGuru = findViewById(R.id.rvJadwalGuru)
+        
+        tvNotifikasiHeader = findViewById(R.id.tvNotifikasiHeader)
+        tvSelectedKelas = findViewById(R.id.tvSelectedKelas)
+        tvJumlahSiswa = findViewById(R.id.tvJumlahSiswa)
+        tvTanggalHariIni = findViewById(R.id.tvTanggalHariIni)
+        
+        layoutDetailKelas = findViewById(R.id.layoutDetailKelas)
+        progressBarKelas = findViewById(R.id.progressBarKelas)
+        progressBarDetail = findViewById(R.id.progressBarDetail)
+        
+        rvNotifikasi.layoutManager = LinearLayoutManager(this)
+        rvDaftarKelas.layoutManager = GridLayoutManager(this, 2)
+        rvDaftarSiswa.layoutManager = LinearLayoutManager(this)
+        rvJadwalGuru.layoutManager = LinearLayoutManager(this)
+        
+        // Set tanggal hari ini
+        val dateFormat = SimpleDateFormat("EEEE, dd MMMM yyyy", Locale("id", "ID"))
+        tvTanggalHariIni.text = dateFormat.format(Date())
+    }
+
+    private fun loadNotifikasi() {
+        scope.launch {
+            try {
+                val response = apiService.getNotifikasi()
+                
+                if (response.isSuccessful && response.body()?.success == true) {
+                    val notifikasiData = response.body()?.data
+                    val unreadNotif = notifikasiData?.notifikasi?.filter { !it.isRead } ?: emptyList()
+                    
+                    if (unreadNotif.isNotEmpty()) {
+                        tvNotifikasiHeader.visibility = View.VISIBLE
+                        rvNotifikasi.visibility = View.VISIBLE
+                        rvNotifikasi.adapter = NotifikasiCardAdapter(unreadNotif)
+                    }
+                }
+            } catch (e: Exception) {
+                // Ignore notification errors
+            }
+        }
+    }
+
+    private fun loadSemuaKelas() {
+        progressBarKelas.visibility = View.VISIBLE
+        scope.launch {
+            try {
+                val response = apiService.getSemuaKelas()
+                
+                if (response.isSuccessful && response.body()?.success == true) {
+                    val kelasList = response.body()?.data ?: emptyList()
+                    rvDaftarKelas.adapter = KelasPilihanAdapter(kelasList) { kelas ->
+                        onKelasSelected(kelas)
+                    }
+                } else {
+                    Toast.makeText(this@SiswaActivityNew, "Gagal memuat daftar kelas", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                Toast.makeText(this@SiswaActivityNew, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+            } finally {
+                progressBarKelas.visibility = View.GONE
+            }
+        }
+    }
+
+    private fun onKelasSelected(kelas: KelasWithSiswa) {
+        selectedKelas = kelas
+        
+        tvSelectedKelas.text = "${kelas.namaKelas} (${kelas.kodeKelas})"
+        tvJumlahSiswa.text = "${kelas.jumlahSiswa} siswa"
+        
+        // Show daftar siswa
+        val siswaList = kelas.siswa ?: emptyList()
+        rvDaftarSiswa.adapter = SiswaKelasAdapter(siswaList)
+        
+        // Show layout detail
+        layoutDetailKelas.visibility = View.VISIBLE
+        
+        // Scroll to detail (optional - auto scrolls)
+        
+        // Load jadwal guru for this kelas
+        loadJadwalGuru(kelas.id)
+    }
+
+    private fun loadJadwalGuru(kelasId: Int) {
+        progressBarDetail.visibility = View.VISIBLE
+        scope.launch {
+            try {
+                val tanggal = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+                val response = apiService.getKelasKehadiran(tanggal = tanggal, kelasId = kelasId)
+                
+                if (response.isSuccessful && response.body()?.success == true) {
+                    val kelasKehadiranData = response.body()?.data
+                    val kelasList = kelasKehadiranData?.kelas ?: emptyList()
+                    
+                    if (kelasList.isNotEmpty()) {
+                        val jadwalHariIni = kelasList[0].jadwalHariIni
+                        rvJadwalGuru.adapter = JadwalGuruSiswaAdapter(
+                            jadwalList = jadwalHariIni,
+                            onInputKehadiran = { jadwal -> showInputKehadiranDialog(jadwal) },
+                            onRequestPengganti = { jadwal -> showRequestPenggantiDialog(jadwal) }
+                        )
+                    } else {
+                        Toast.makeText(this@SiswaActivityNew, "Tidak ada jadwal hari ini", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    Toast.makeText(this@SiswaActivityNew, "Gagal memuat jadwal", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                Toast.makeText(this@SiswaActivityNew, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+            } finally {
+                progressBarDetail.visibility = View.GONE
+            }
+        }
+    }
+
+    private fun showInputKehadiranDialog(jadwal: JadwalKelas) {
+        val options = arrayOf("Hadir", "Tidak Hadir", "Izin", "Sakit")
+        val statusValues = arrayOf("hadir", "tidak_hadir", "izin", "sakit")
+        
+        AlertDialog.Builder(this)
+            .setTitle("Input Kehadiran ${jadwal.guru.nama}")
+            .setItems(options) { _, which ->
+                inputKehadiran(jadwal, statusValues[which])
+            }
+            .setNegativeButton("Batal", null)
+            .show()
+    }
+
+    private fun inputKehadiran(jadwal: JadwalKelas, status: String) {
+        val kelas = selectedKelas ?: return
+        
+        scope.launch {
+            try {
+                val request = InputKehadiranRequest(
+                    jadwalKelasId = jadwal.id,
+                    kelasId = kelas.id,
+                    tanggal = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date()),
+                    status = status,
+                    keterangan = null
+                )
+                
+                val response = apiService.inputKehadiranGuru(request)
+                
+                if (response.isSuccessful && response.body()?.success == true) {
+                    Toast.makeText(this@SiswaActivityNew, "Berhasil input kehadiran", Toast.LENGTH_SHORT).show()
+                    loadJadwalGuru(kelas.id) // Reload
+                } else {
+                    Toast.makeText(this@SiswaActivityNew, "Gagal: ${response.body()?.message}", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                Toast.makeText(this@SiswaActivityNew, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun showRequestPenggantiDialog(jadwal: JadwalKelas) {
+        val kelas = selectedKelas ?: return
+        
+        val dialogView = layoutInflater.inflate(R.layout.dialog_request_pengganti, null)
+        val etAlasan = dialogView.findViewById<EditText>(R.id.etAlasan)
+        
+        AlertDialog.Builder(this)
+            .setTitle("Request Guru Pengganti")
+            .setMessage("${jadwal.guru.nama} - ${jadwal.mapel.nama ?: jadwal.mapel.mapel}")
+            .setView(dialogView)
+            .setPositiveButton("Kirim") { _, _ ->
+                val alasan = etAlasan.text.toString()
+                requestGuruPengganti(jadwal, kelas, alasan)
+            }
+            .setNegativeButton("Batal", null)
+            .show()
+    }
+
+    private fun requestGuruPengganti(jadwal: JadwalKelas, kelas: KelasWithSiswa, alasan: String) {
+        scope.launch {
+            try {
+                val request = RequestGuruPenggantiRequest(
+                    jadwalKelasId = jadwal.id,
+                    tanggal = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date()),
+                    alasan = alasan
+                )
+                
+                // Note: This endpoint might not exist yet, using placeholder
+                Toast.makeText(this@SiswaActivityNew, "Request guru pengganti akan segera diproses", Toast.LENGTH_SHORT).show()
+                // When API is ready: val response = apiService.requestGuruPengganti(request)
+            } catch (e: Exception) {
+                Toast.makeText(this@SiswaActivityNew, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.nav_logout -> {
+                scope.launch {
+                    sessionManager.clearSession()
+                    Toast.makeText(this@SiswaActivityNew, "Berhasil logout", Toast.LENGTH_SHORT).show()
+                    startActivity(Intent(this@SiswaActivityNew, MainActivity::class.java))
+                    finish()
+                }
+            }
+        }
+        drawerLayout.closeDrawer(GravityCompat.START)
+        return true
+    }
+
+    override fun onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START)
+        } else if (layoutDetailKelas.visibility == View.VISIBLE) {
+            layoutDetailKelas.visibility = View.GONE
+            selectedKelas = null
+        } else {
+            super.onBackPressed()
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        scope.cancel()
+    }
+}

@@ -1,0 +1,652 @@
+{
+  "info": {
+    "name": "API Monitoring Kelas",
+    "_postman_id": "monitoring-kelas-api",
+    "description": "Collection untuk testing API Monitoring Kelas (Updated with Mapel & Tahun Ajaran)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Login - Admin",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"admin@example.com\",\n    \"password\": \"password\"\n}"
+            },
+            "description": "Login sebagai Admin. Role akan otomatis terdeteksi dari database.",
+            "url": {
+              "raw": "{{base_url}}/api/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "login"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login - Kurikulum",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"kurikulum@example.com\",\n    \"password\": \"password\"\n}"
+            },
+            "description": "Login sebagai Kurikulum. Role akan otomatis terdeteksi dari database.",
+            "url": {
+              "raw": "{{base_url}}/api/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "login"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login - Kepala Sekolah",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"kepsek@example.com\",\n    \"password\": \"password\"\n}"
+            },
+            "description": "Login sebagai Kepala Sekolah. Role akan otomatis terdeteksi dari database.",
+            "url": {
+              "raw": "{{base_url}}/api/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "login"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login - Siswa",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"siswa@example.com\",\n    \"password\": \"password\"\n}"
+            },
+            "description": "Login sebagai Siswa. Role akan otomatis terdeteksi dari database.",
+            "url": {
+              "raw": "{{base_url}}/api/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "login"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "description": "Logout user dan hapus token autentikasi. Token diambil dari Authorization header (Bearer {{token}}). Pastikan variable {{token}} sudah diset setelah login!",
+            "url": {
+              "raw": "{{base_url}}/api/logout",
+              "host": ["{{base_url}}"],
+              "path": ["api", "logout"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Guru Management",
+      "item": [
+        {
+          "name": "Get All Guru",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"note\": \"GET request - body ini opsional, hanya untuk testing\"\n}"
+            },
+            "description": "Mengambil semua data guru. Pastikan token sudah diset di variable {{token}}.",
+            "url": {
+              "raw": "{{base_url}}/api/gurus",
+              "host": ["{{base_url}}"],
+              "path": ["api", "gurus"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Single Guru",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"id\": 1,\n    \"note\": \"GET request - body ini opsional, ID diambil dari URL\"\n}"
+            },
+            "description": "Mengambil detail guru berdasarkan ID. Ubah angka di URL untuk mendapatkan guru lain.",
+            "url": {
+              "raw": "{{base_url}}/api/gurus/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "gurus", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Guru",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"kode_guru\": \"GR004\",\n    \"guru\": \"Dedi Setiawan\",\n    \"telepon\": \"081234567890\"\n}"
+            },
+            "description": "Contoh: Tambah guru baru dengan kode GR004. Kode guru harus unique!",
+            "url": {
+              "raw": "{{base_url}}/api/gurus",
+              "host": ["{{base_url}}"],
+              "path": ["api", "gurus"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Guru",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"kode_guru\": \"GR001\",\n    \"guru\": \"Budi Santoso - Updated\",\n    \"telepon\": \"081234567899\"\n}"
+            },
+            "description": "Update data guru dengan ID=1. Gunakan data guru yang sudah ada di database.",
+            "url": {
+              "raw": "{{base_url}}/api/gurus/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "gurus", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Guru",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"id\": 4,\n    \"confirmation\": \"yes\",\n    \"note\": \"Hapus guru dengan ID=4 (guru yang baru ditambahkan)\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/gurus/4",
+              "host": ["{{base_url}}"],
+              "path": ["api", "gurus", "4"]
+            },
+            "description": "Hapus guru dengan ID=4 (guru yang baru ditambahkan). Jangan hapus data sample!"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Mapel Management",
+      "item": [
+        {
+          "name": "Get All Mapel",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/mapels",
+              "host": ["{{base_url}}"],
+              "path": ["api", "mapels"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Mapel",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"kode_mapel\": \"MP011\",\n    \"mapel\": \"Pendidikan Agama Islam\"\n}"
+            },
+            "description": "Tambah mapel baru. Kode mapel harus unique! Contoh: MP011-MP020 untuk mapel tambahan.",
+            "url": {
+              "raw": "{{base_url}}/api/mapels",
+              "host": ["{{base_url}}"],
+              "path": ["api", "mapels"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Single Mapel",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/mapels/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "mapels", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Mapel",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"kode_mapel\": \"MP011\",\n    \"mapel\": \"Pendidikan Agama Islam\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/mapels/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "mapels", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Mapel",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/mapels/11",
+              "host": ["{{base_url}}"],
+              "path": ["api", "mapels", "11"]
+            },
+            "description": "Hapus mapel dengan ID=11 (mapel yang baru ditambahkan). Jangan hapus data sample!"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Tahun Ajaran Management",
+      "item": [
+        {
+          "name": "Get All Tahun Ajaran",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/tahun-ajarans",
+              "host": ["{{base_url}}"],
+              "path": ["api", "tahun-ajarans"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Active Tahun Ajaran",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/tahun-ajarans/active",
+              "host": ["{{base_url}}"],
+              "path": ["api", "tahun-ajarans", "active"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Tahun Ajaran",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"tahun\": \"2026/2027\",\n    \"flag\": 0\n}"
+            },
+            "description": "Tambah tahun ajaran baru dengan flag=0 (tidak aktif). Format tahun: YYYY/YYYY.",
+            "url": {
+              "raw": "{{base_url}}/api/tahun-ajarans",
+              "host": ["{{base_url}}"],
+              "path": ["api", "tahun-ajarans"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Single Tahun Ajaran",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/tahun-ajarans/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "tahun-ajarans", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Tahun Ajaran",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"tahun\": \"2025/2026\",\n    \"flag\": 1\n}"
+            },
+            "description": "Update tahun ajaran ID=3 dan set sebagai aktif. Otomatis akan menonaktifkan tahun ajaran lainnya.",
+            "url": {
+              "raw": "{{base_url}}/api/tahun-ajarans/3",
+              "host": ["{{base_url}}"],
+              "path": ["api", "tahun-ajarans", "3"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Tahun Ajaran",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/tahun-ajarans/4",
+              "host": ["{{base_url}}"],
+              "path": ["api", "tahun-ajarans", "4"]
+            },
+            "description": "Hapus tahun ajaran ID=4 (yang baru ditambahkan). Jangan hapus data sample!"
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://127.0.0.1:8000",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}

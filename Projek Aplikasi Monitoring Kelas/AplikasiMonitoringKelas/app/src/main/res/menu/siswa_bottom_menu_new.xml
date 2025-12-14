@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_jadwal"
+        android:icon="@android:drawable/ic_menu_today"
+        android:title="Izin Guru" />
+    
+    <item
+        android:id="@+id/nav_entri"
+        android:icon="@android:drawable/ic_menu_edit"
+        android:title="Entri" />
+    
+    <item
+        android:id="@+id/nav_list"
+        android:icon="@android:drawable/ic_menu_agenda"
+        android:title="List" />
+</menu>

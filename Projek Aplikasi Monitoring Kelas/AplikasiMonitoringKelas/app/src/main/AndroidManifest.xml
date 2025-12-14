@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Internet Permission untuk koneksi API -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <application
+        android:name=".MonitoringApplication"
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.AplikasiMonitoringKelas"
+        android:usesCleartextTraffic="true"
+        android:networkSecurityConfig="@xml/network_security_config"
+        tools:targetApi="31">
+        <activity
+            android:name=".AdminActivity"
+            android:exported="false" />
+        <activity
+            android:name=".KurikulumActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AplikasiMonitoringKelas.AppCompat" />
+        <activity
+            android:name=".KepalaSekolahActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AplikasiMonitoringKelas.AppCompat" />
+        <activity
+            android:name=".SiswaActivityNew"
+            android:exported="false"
+            android:theme="@style/Theme.AplikasiMonitoringKelas.AppCompat" />
+        <activity
+            android:name=".SiswaDashboardActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AplikasiMonitoringKelas.AppCompat" />
+        
+        <!-- Role Kurikulum Activities -->
+        <activity
+            android:name=".kurikulum.KurikulumDashboardActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AplikasiMonitoringKelas.AppCompat" />
+        <activity
+            android:name=".KelasKehadiranActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AplikasiMonitoringKelas.AppCompat" />
+        <activity
+            android:name=".InputGuruIzinActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AplikasiMonitoringKelas.AppCompat" />
+        <activity
+            android:name=".AssignGuruPenggantiActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AplikasiMonitoringKelas.AppCompat" />
+        
+        <!-- Role Kepala Sekolah Activities -->
+        <activity
+            android:name=".JadwalKelasActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AplikasiMonitoringKelas.AppCompat" />
+        <activity
+            android:name=".KehadiranGuruActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AplikasiMonitoringKelas.AppCompat" />
+        
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.AplikasiMonitoringKelas">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>
